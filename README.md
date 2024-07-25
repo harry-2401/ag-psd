@@ -41,7 +41,7 @@ Description of the structure of Psd object used by `readPsd` and `writePsd` func
 
 ```ts
 // read PSD from ArrayBuffer, typed array or Node.js Buffer object
-export function readPsd(buffer: Buffer | ArrayBuffer | BufferLike, options?: ReadOptions): Psd;
+export async function readPsd(buffer: Buffer | ArrayBuffer | BufferLike, options?: ReadOptions, postImageDataHandler?: PostImageDataHandler): Psd;
 
 // write PSD to ArrayBuffer
 export function writePsd(psd: Psd, options?: WriteOptions): ArrayBuffer;
@@ -313,10 +313,14 @@ interface ReadOptions {
   throwForMissingFeatures?: boolean;
   /** Logs if features are missing. */
   logMissingFeatures?: boolean;
-  /** Keep image data as byte array instead of canvas.
-   * (image data will appear in `imageData` fields instead of `canvas` fields)
+  /** 
    * This avoids issues with canvas premultiplied alpha corrupting image data. */
   useImageData?: boolean;
+  /**
+   * Keep image data as byte array instead of canvas.
+   * (image data will appear in `imageData` fields instead of `canvas` fields)
+  */
+  useCanvasData?: boolean;
   /** Loads thumbnail raw data instead of decoding it's content into canvas.
    * `thumnailRaw` field is used instead of `thumbnail` field. */
   useRawThumbnail?: boolean;
