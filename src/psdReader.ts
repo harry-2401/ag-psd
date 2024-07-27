@@ -353,7 +353,7 @@ export async function readPsd(
 
         if (handler && !skip) {
           try {
-            handler.read(reader, psd.imageResources, left, options);
+            await handler.read(reader, psd.imageResources, left, options);
           } catch (e) {
             if (options.throwForMissingFeatures) throw e;
             skipBytes(reader, await left());
