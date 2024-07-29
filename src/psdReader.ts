@@ -737,7 +737,11 @@ async function readLayerChannelImageData(
           mask.canvas = imageDataToCanvas(maskData);
         }
 
-        await postImageDataHandler(maskData, layer.id);
+        await postImageDataHandler(
+          maskData,
+          layer.id,
+          layer.layerColor !== "none"
+        );
       }
     } else if (channel.id === ChannelID.RealUserMask) {
       if (options.logMissingFeatures) {
@@ -799,7 +803,11 @@ async function readLayerChannelImageData(
       layer.canvas = imageDataToCanvas(imageData);
     }
 
-    await postImageDataHandler(imageData, layer.id);
+    await postImageDataHandler(
+      imageData,
+      layer.id,
+      layer.layerColor !== "none"
+    );
   }
 }
 
@@ -1120,7 +1128,7 @@ async function readImageData(
     psd.canvas = imageDataToCanvas(imageData);
   }
 
-  await postImageDataHandler(imageData, -1);
+  await postImageDataHandler(imageData, -1, false);
 }
 
 function cmykToRgb(cmyk: PixelData, rgb: PixelData, reverseAlpha: boolean) {
