@@ -1865,7 +1865,8 @@ export interface Psd extends LayerAdditionalInfo {
 
 export type PostImageDataHandler = (
   imageData: PixelData,
-  id?: number
+  id?: number,
+  isLayerColor?: boolean
 ) => Promise<void>;
 
 export interface ReadOptions {
