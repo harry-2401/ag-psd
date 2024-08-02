@@ -14,6 +14,7 @@ import {
   PixelData,
   PixelArray,
   PostImageDataHandler,
+  AdditionalDataPostImageHandler,
 } from "./psd";
 import {
   resetImageData,
@@ -269,7 +270,7 @@ export async function readPsd(
   readOptions: ReadOptions = {},
   postImageDataHandler: PostImageDataHandler = async function (
     _data: PixelData,
-    _id?: number
+    _additionalData: AdditionalDataPostImageHandler
   ) {}
 ) {
   // header
@@ -433,7 +434,7 @@ export async function readLayerInfo(
   options: ReadOptionsExt,
   postImageDataHandler: PostImageDataHandler = async function (
     _data: PixelData,
-    _id?: number
+    _additionalData: AdditionalDataPostImageHandler
   ) {}
 ) {
   let layerCount = readInt16(reader);
@@ -637,7 +638,7 @@ async function readLayerChannelImageData(
   options: ReadOptionsExt,
   postImageDataHandler: PostImageDataHandler = async function (
     _data: PixelData,
-    _id?: number
+    _additionalData: AdditionalDataPostImageHandler
   ) {}
 ) {
   const layerWidth = (layer.right || 0) - (layer.left || 0);
@@ -737,11 +738,11 @@ async function readLayerChannelImageData(
           mask.canvas = imageDataToCanvas(maskData);
         }
 
-        await postImageDataHandler(
-          maskData,
-          layer.id,
-          layer.layerColor !== "none"
-        );
+        await postImageDataHandler(maskData, {
+          id: layer.id,
+          isLayerColor: layer.layerColor !== "none",
+          // layerName: layer.name,
+        });
       }
     } else if (channel.id === ChannelID.RealUserMask) {
       if (options.logMissingFeatures) {
@@ -803,11 +804,11 @@ async function readLayerChannelImageData(
       layer.canvas = imageDataToCanvas(imageData);
     }
 
-    await postImageDataHandler(
-      imageData,
-      layer.id,
-      layer.layerColor !== "none"
-    );
+    await postImageDataHandler(imageData, {
+      id: layer.id,
+      isLayerColor: layer.layerColor !== "none",
+      layerName: layer.name,
+    });
   }
 }
 
@@ -955,7 +956,7 @@ async function readImageData(
   options: ReadOptionsExt,
   postImageDataHandler: PostImageDataHandler = async function (
     _data: PixelData,
-    _id?: number
+    _additionalData: AdditionalDataPostImageHandler
   ) {}
 ) {
   const compression = readUint16(reader) as Compression;
@@ -1128,7 +1129,10 @@ async function readImageData(
     psd.canvas = imageDataToCanvas(imageData);
   }
 
-  await postImageDataHandler(imageData, -1, false);
+  await postImageDataHandler(imageData, {
+    id: -1,
+    isLayerColor: false,
+  });
 }
 
 function cmykToRgb(cmyk: PixelData, rgb: PixelData, reverseAlpha: boolean) {
