@@ -1863,10 +1863,15 @@ export interface Psd extends LayerAdditionalInfo {
   annotations?: Annotation[];
 }
 
+export type AdditionalDataPostImageHandler = {
+  id?: number;
+  isLayerColor?: boolean;
+  layerName?: string;
+};
+
 export type PostImageDataHandler = (
   imageData: PixelData,
-  id?: number,
-  isLayerColor?: boolean
+  data: AdditionalDataPostImageHandler
 ) => Promise<void>;
 
 export interface ReadOptions {
